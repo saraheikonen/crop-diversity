@@ -1,6 +1,8 @@
 ## Code from manuscript: 'Climate change threatens crop diversity at low latitudes'
 #### Sara Heikonen, Matias Heino, Mika Jalava, Stefan Siebert, Daniel Viviroli, Matti Kummu
 
+We would like to acknowledge Sterre ter Haar ([https://github.com/topersist](https://github.com/topersist)) from Leiden University for comments that helped improve this documentation, and for providing an updated list of climate data download URLs. Please see Sterre’s fork of this repository for MATLAB scripts that have been updated for newer MATLAB versions (related to nansum, nanmean and similar functions).
+
 The ananlysis is composed of five MATLAB scripts and five R scripts:
 
 #### 1) step1_crop_calendar_filters.R
@@ -11,8 +13,9 @@ The ananlysis is composed of five MATLAB scripts and five R scripts:
 - Create total cropland mask rasters for main analysis with SPAM 2020 data (4), for supplementary analysis with SPAM 2005 (5) and SPAM 2010 data (6), and seasonal Safe Climatic Space (SCS) analysis
 - Create crop production rasters for maize and soybean with matching coverage for seasonal SCS analysis
 
+
 #### 3) step3_holdridge_download_data_missing_removed.m
-- Modified from code from Kummu et al. (7). Downloads present and future climate parameter data datafrom Worldclim (8) and preprocess for next analysis steps. Data can be preprosessed either for the main annual SCS analysis or for the supplementry analaysis with seasonal SCS.
+- Modified from code from Kummu et al. (7). Downloads present and future climate parameter data data from Worldclim (8) and preprocess for next analysis steps. Data can be preprocessed either for the main annual SCS analysis or for the supplementary analysis with seasonal SCS.
 
 #### 4) step4_holdridge_define_classes.m
 -  Modified from code from Kummu et al. (7). Classifies global land area into Holdridge life zones.
@@ -21,7 +24,7 @@ The ananlysis is composed of five MATLAB scripts and five R scripts:
 -  Modified from code from Kummu et al. (7). Calculates future shifts in Holdridge life zones.
 
 #### 6) step6_holdridge_analyses_main.m
--  Modified from code from Kummu et al. (7). Combines Holdridge data with crop production data. Delineates crop specific SCSs and share of production and cropland area within and outside the SCS. The script performs the analysis for one crop at a time with the following input parameters: env = 'local', spamcrop_name = (crop raster filename here without the '.tif'), scenarios = 'warming', spam_year = '2020' or '2010' or '2005'.
+-  Modified from code from Kummu et al. (7). Combines Holdridge data with crop production data. Delineates crop specific SCSs and share of production and cropland area within and outside the SCS. The script performs the analysis for one crop at a time with the following input parameters: env = 'local', spamcrop_name = (crop raster filename here without the '.tif'), scenarios = 'warming', spam_year = '2020' or '2010' or '2005'. For the article, the code was run in parallel for all crops at the same time in a supercomputer using 5 CPUs per crop (1 CPU per modeled warming level + 1 for the baseline scenario). If you run the code locally, the script could be modified and sped up by utilizing 5 workers in the parfor loop (line 143). 
 	   
 #### 7) step7_reorganize_step6_results.m
 - Reorganizes results collected from the parfor loop in step 6 for further analyses
@@ -33,19 +36,17 @@ The ananlysis is composed of five MATLAB scripts and five R scripts:
 - Produces all figures and reformats some output tables from previous steps
 
 #### 10) step10_seasonal_vs_annual_SCS.R
-- Comparison of results from seasonal and annual SCS approaches. Before running this script, the steps 3-8 should be run with annual SCS approach and seasonal SCS approach. The selction between approaches is made in step 3, and the steps after that are the same with both approaches.
+- Comparison of results from seasonal and annual SCS approaches. Before running this script, the steps 3-8 should be run both with annual SCS approach and seasonal SCS approach. The selection between approaches is made in step 3, and the steps after that are the same with both approaches.
   
-### Data requirements
-The data used for downloading the data and creating the Holdridge life zones are in the 'input' folder. In the 'ref_data' folder, there is a the country code file and raster and the crop group codes file that were used in these analyses.
+### Data requirements and notes
+The data used for downloading the data and creating the Holdridge life zones are in the 'input' folder. In the 'ref_data' folder, there is the country code file and raster and the crop group codes file that were used in these analyses. The scripts have coherent file structure and external data needed to perform the analyses are listed in References (1-6 and 8).
 
-The scripts have coherent file structure and external data needed to perform the analyses are listed in References (1-6 and 8).
+From the crop production data (refs 4, 5, 6), we only use the production files that combine production from all technologies (combined production from irrigated & different types of rainfed systems, see the data description from data provider for more details). These files should be stored in folders “spamXXXX”, where XXXX is the data year. The production file names should be edited to only include the crop name abbreviation as described by the data provider, i.e. “BANA.tif” for banana. In addition, we use physical cropland area data, again only the files that combine cropland area from all technologies. These files should be stored in folders “spamXXXX/physical_area”, and the files do not need to be renamed.
+
 
 ### Software requirements
 
 Used MATLAB version: 9.14.0.2239454 (R2023a)
-
-Used external MATLAB packages and their versions:
-cbarrow 1.1.0.0, crameri 1.08, export_fig 3.27, wprctile 1.0.0.0
 
 Used R version: 4.4.1
 
