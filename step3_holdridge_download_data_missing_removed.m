@@ -11,7 +11,7 @@ cd(folder_wd)
 %% Initialise run
 
 % folder where data will be stored
-data_folder = 'D:\Article 1 results\data\';
+data_folder = folder_wd;
 
 % version of the run
 s_version = '1';
@@ -20,7 +20,7 @@ s_version = '1';
 % only download baseline & current data, calculate parameters (2)
 % only download future data, calculate parameters (3)
 % or you have the data, and just want to calculate parameters (0)
-s_download = 0;
+s_download = 1;
 
 % holdridge parameters within growing season (1) or the whole year (0)?
 % growing season calculation available only for maize and soybean.
@@ -104,17 +104,20 @@ for year = 1:size(future_years, 2)
     future_sheet = sprintf('future_%s', futureYear);
     
     
-    %% download present and baseline data
+    %% download present and baseline data, only once while looping through 
+    % future years
     
-    if ((s_download == 1)||(s_download == 2))
+    if (((s_download == 1)||(s_download == 2)) && (year == 1))
         % download
     
         % specify websave options
         options = weboptions('Timeout', Inf);
         
         % load the URL list for present data
+        cd(folder_wd)
         urlList = readtable( ...
-            'input/worldclim_data_download_4scen.xlsx','Sheet','current','Range','D18:D26', ReadVariableNames=false)
+            fullfile(data_folder, 'input/worldclim_data_download_4scen.xlsx'),...
+        'Sheet','current','Range','D18:D26', ReadVariableNames=false)
     
         % go to data folder, store main folder
         mainFolder = cd(folder_data_present);
@@ -134,8 +137,10 @@ for year = 1:size(future_years, 2)
         
     
     % load the URL list for baseline data
+        cd(folder_wd)
         urlList = readtable( ...
-            'input/worldclim_data_download_4scen.xlsx','Sheet','current','Range','D6:D8', ReadVariableNames=false);
+            fullfile(data_folder, 'input/worldclim_data_download_4scen.xlsx'),...
+            'Sheet','current','Range','D6:D8', ReadVariableNames=false);
         
         % go to data folder, store main folder
         mainFolder = cd(folder_data_baseline);
@@ -328,10 +333,12 @@ for year = 1:size(future_years, 2)
         % download
     
     % specify websave options
+    cd(folder_wd)
     options = weboptions('Timeout', Inf);    
     
     [num,urlList,raw] = xlsread(...
-        'input/worldclim_data_download_4scen.xlsx',future_sheet,'I7:H141');
+        fullfile(data_folder,'input/worldclim_data_download_4scen.xlsx'),...
+        future_sheet,'I7:H141');
     clearvars num raw
     
     % go to data folder, store main folder
@@ -351,7 +358,7 @@ for year = 1:size(future_years, 2)
                 disp(['current var to be downloaded is ', num2str(var)]);
                 %fileNameZip = 'temp.zip';
                 fileUrl = urlList{(gcm-1)*16 + (ssp-1)*4 + var,1};
-                fileNameZip = fileUrl(54:94);
+                fileNameZip = fileUrl(58:end);
                    
                 % check if already downloaded
                 
@@ -388,7 +395,7 @@ for year = 1:size(future_years, 2)
     end
     
     %% calculate the holdridge parameters
-    
+    cd(folder_wd)
     [num,urlList,raw] = xlsread(...
         'input/worldclim_data_download_4scen.xlsx',future_sheet,'I7:H141');
     clearvars num raw
